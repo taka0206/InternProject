@@ -1,5 +1,5 @@
 /*
- * app.js - Express server static files
+ * app.js - Express server with basic auth
 */
 
 /*jslint         node    : true, continue : true,
@@ -13,8 +13,9 @@
 // ------------ BEGIN MODULE SCOPE VARIABLES --------------
 'use strict';
 var
-  http    = require( 'http'    ),
-  express = require( 'express' ),
+  http    = require( 'http'     ),
+  express = require( 'express'  ),
+  routes  = require( './routes' ),
 
   app     = express(),
   server  = http.createServer( app );
@@ -24,6 +25,7 @@ var
 app.configure( function () {
   app.use( express.bodyParser() );
   app.use( express.methodOverride() );
+  app.use( express.basicAuth( 'user', 'spa' ) );
   app.use( express.static( __dirname + '/public' ) );
   app.use( app.router );
 });
@@ -40,9 +42,7 @@ app.configure( 'production', function () {
   app.use( express.errorHandler() );
 });
 
-app.get( '/', function ( request, response ) {
-  response.redirect( '/spa.html' );
-});
+routes.configRoutes( app, server );
 // -------------- END SERVER CONFIGURATION ----------------
 
 // ----------------- BEGIN START SERVER -------------------
